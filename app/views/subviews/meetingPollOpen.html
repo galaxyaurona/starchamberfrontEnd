@@ -1,0 +1,89 @@
+<div class="container-fluid">
+	<div class="row"><!-- for some reason without this the size is off -->
+		<div class="panel">
+		<div class="panel-heading">
+			<p> Poll closes in 32h5m </p><!-- this is static untill it can be fetched -->
+		</div>
+		<div class="panel-body">
+			<div class="row">
+					<div ng-repeat="i in meeting.pollItems">
+						<div class="col-md-9">
+							<div class="container" style="height:.5em;">
+							</div>
+							<!-- The progress bars will need to be redone somehow to not be limited
+							Due to the rotation they cant be longer than the div they were inside !-->
+							<div class="progress vertical" popover-placement="right" popover="This is where names appear!" popover-trigger="mouseenter">
+								<progressbar value="(i.votedId.length/meeting.invite.length)*100 | number:2" min="0" max="100">
+								<!-- This progress bar should be changed to the angular-bootstrap version instead of the normal bootstrap-->
+									<span style="color:black; white-space:nowrap;">{{(i.votedId.length/meeting.invite.length)*100 | number:2}} %</span>
+									<!-- pretty much make this take the number of voted/invited*100 -->
+								</progressbar>
+							</div>
+							</div>
+							<div class="col-md-3">
+							{{i.date}} at {{i.time}}
+							<button ng-click="vote(i.id)" class="btn btn-success btn-sm"  ng-if="!manager">Vote!</button>
+							<button ng-click="deleteMeetingTime(i.id)" class="btn btn-danger btn-sm"  ng-if="manager">Delete</button>
+							</div>
+						</div><!-- ng-repeat -->
+			</div><!-- /row -->
+			<div class="row" style="height:1em"></div>
+			<div class="row">
+				<div style="padding-left:5em">
+				<button ng-if="manager" type="button" class="btn btn-success" data-toggle="modal" data-target="#timeModal">
+				New Time </button>
+				<!-- Modal -->
+				<div id="timeModal" class="modal fade" role="dialog">
+					<div class="modal-dialog">
+						<!-- content -->
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title"> Add new timeslot </h4>
+							</div>
+							<div class="modal-body">
+								Enter details for new meeting time
+								<form class="simple-form" ng-submit="addMeetingTime(date,time)">
+									<input type="date" class="form-control" ng-model="date" placeholder="Date...">
+									<input type="time" ng-model="time" placeholder="Time...">
+									<button type ="submit" class="btn btn-default">Submit</button>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<button type="button" ng-if="manager" class="btn btn-warning" data-toggle="modal" data-target="#reModal">
+				Re-schedule </button>
+				</div>
+				<!-- modal for re-scheduling the meeting-->
+				<div id="reModal" class="modal fade" role="dialog">
+					<div class="modal-dialog">
+						<!-- content -->
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title"> Re-Schedule </h4>
+							</div>
+							<div class="modal-body">
+								Enter new poll cut off date
+								<form class="simple-form" ng-submit=""> <!-- this should clear previous times -->
+									<input type="date" class="form-control" ng-model="date" placeholder="Date...">
+									<input type="time" ng-model="time" placeholder="Time...">
+									<button type ="submit" class="btn btn-default">Submit</button>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" style="height:2em"></div>
+			</div>
+		</div><!-- panel -->
+	</div><!-- /row -->
+</div>

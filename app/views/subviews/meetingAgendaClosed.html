@@ -1,0 +1,38 @@
+<div class="container-fluid">
+	<div class="row"><!-- for some reason without this the size is off -->
+		<div class="panel">
+			<div class="panel-heading">
+			<div class="row">
+			<div class="col-md-4">
+				<button class="btn btn-warning btn-sm">Closed on20:25 15/4/2014 </button>
+				</div>
+				<div class="col-md-4">
+				<p style="text-align:center"> Agenda Items - {{agendaItems.approved.length}} Items</p>
+				</div>
+				<div class="col-md-4">
+				</div>
+			</div>
+			</div>
+			<div class="panel-body">
+				<div ng-repeat="i in agendaItems.approved">
+					<div class="row">
+						<div class="col-md-6">
+							{{i.title}}
+						</div>
+						<div class="col-md-4">
+						<p style="text-align:right">{{i.duration}} Minutes</p>
+						</div>
+						<div class="col-md-2">
+
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="panel-footer">
+				<p style="text-align:center"> Time Allotted: {{meeting.duration}} - Time used: {{totalTime}} minutes</p>
+				<progressbar max="100" value="totalTimePercent"><span style="color:black; white-space:nowrap;">{{totalTimePercent | number:2}} / 100%</span></progressbar>
+				<p style="text-align:center"> {{totalTimePercent | number:2}} % used </p>
+			</div>
+		</div><!-- panel -->
+	</div><!-- /row -->
+</div>

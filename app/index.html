@@ -1,0 +1,123 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <base href="/">
+    <title>Star Chamber G</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/angular-xeditable/dist/css/xeditable.css" />
+    <link rel="stylesheet" href="bower_components/angular-ui-grid/ui-grid.css" />
+    <link rel="stylesheet" href="bower_components/angular.panels/dist/angular.panels.min.css" />
+    <link rel="stylesheet" href="bower_components/split-pane/split-pane.css" />
+    <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css" />
+    <link rel="stylesheet" href="bower_components/textAngular/dist/textAngular.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  </head>
+  <body ng-app="starChamberUiApp">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <div class="wrapper">
+      <sc-navbar></sc-navbar>
+      <div ng-view=""></div>
+      <div class="push"></div>
+    </div>
+
+
+
+
+
+
+    <div class="footer">
+      <div class="container">
+        Copyright © 2015 Team G-La Trobe University</p>
+      </div>
+    </div>
+
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+     <script>
+       !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
+       (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
+       r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
+       }(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+       ga('create', 'UA-XXXXX-X');
+       ga('send', 'pageview');
+    </script>
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/flow.js/dist/flow.js"></script>
+    <script src="bower_components/ng-flow/dist/ng-flow.js"></script>
+    <script src="bower_components/angular-xeditable/dist/js/xeditable.js"></script>
+    <script src="bower_components/angular-ui-grid/ui-grid.js"></script>
+    <script src="bower_components/angular.panels/dist/angular.panels.min.js"></script>
+    <script src="bower_components/bootbox/bootbox.js"></script>
+    <script src="bower_components/ngBootbox/dist/ngBootbox.js"></script>
+    <script src="bower_components/angular-ui-uploader/dist/uploader.js"></script>
+    <script src="bower_components/split-pane/split-pane.js"></script>
+    <script src="bower_components/angular-split-pane/angular-split-pane.js"></script>
+    <script src="bower_components/Chart.js/Chart.js"></script>
+    <script src="bower_components/angular-chart.js/dist/angular-chart.js"></script>
+    <script src="bower_components/rangy/rangy-core.js"></script>
+    <script src="bower_components/rangy/rangy-classapplier.js"></script>
+    <script src="bower_components/rangy/rangy-highlighter.js"></script>
+    <script src="bower_components/rangy/rangy-selectionsaverestore.js"></script>
+    <script src="bower_components/rangy/rangy-serializer.js"></script>
+    <script src="bower_components/rangy/rangy-textrange.js"></script>
+    <script src="bower_components/textAngular/dist/textAngular.js"></script>
+    <script src="bower_components/textAngular/dist/textAngular-sanitize.js"></script>
+    <script src="bower_components/textAngular/dist/textAngularSetup.js"></script>
+    <script src="bower_components/ng-ckeditor/ng-ckeditor.js"></script>
+    <script src="bower_components/angular-ckeditor/angular-ckeditor.js"></script>
+    <script src="bower_components/ckeditor/ckeditor.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/scripts.js -->
+
+        <script src="scripts/app.js"></script>
+        <script src="scripts/controllers/test.js"></script>
+        <script src="scripts/directives/starchambernavbar.js"></script>
+        <script src="scripts/controllers/login.js"></script>
+        <script src="scripts/controllers/concern.js"></script>
+        <script src="scripts/services/userService.js"></script>
+        <script src="scripts/controllers/dashboard.js"></script>
+        <script src="scripts/controllers/meeting.js"></script>
+		    <script src="scripts/services/meetingService.js"></script>
+        <script src="scripts/services/RESTService.js"></script>
+		    <script src="scripts/controllers/agenda.js"></script>
+		    <script src="scripts/services/agendaService.js"></script>
+		    <script src="scripts/controllers/vote.js"></script>
+		    <script src="scripts/services/pollService.js"></script>
+        <script src="scripts/controllers/invite.js"></script>
+        <script src="scripts/services/concernService.js"></script>
+
+        <script src="scripts/services/minuteService.js"></script>
+        <script src="scripts/services/reportService.js"></script>
+        <script src="scripts/controllers/minute.js"></script>
+        <!-- endbuild -->
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+#folders
+node_modules
+.tmp
+bower_components
+.idea
+dist
+.sass-cache
+
+#files

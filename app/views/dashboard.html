@@ -1,0 +1,93 @@
+<div class="container-fluid">
+  <div class="row">
+    <!---------CALENDAR PANEL----->
+    <div class="col-lg-5 col-md-12 col-sm-12">
+      <div class="panel panel-default" id="reminder-panel">
+
+        <div class="panel-heading">
+          <h3> Meeting calendar</h3>
+          <span class="pull-right">
+            <button id="show-calendar" class="btn btn-default pull-right">Show full calendar<span class="glyphicon glyphicon-calendar"></span></button>
+            <a ng-if="manager" href="#/meeting?id=new" class="pull-right"><button class="btn btn-default">Schedule new meeting  <span class="glyphicon glyphicon-plus"></span></button></a>
+          </span>
+
+          </form>
+
+        </div>
+
+        <div class="panel-body">
+          <div id="grid2" ui-grid="meetingGridOptions" class="grid"></div>
+
+        </div>
+
+      </div>
+    </div>
+    <!--------- END CALENDAR PANEL----->
+    <!--------- MINUTE PANEL----->
+    <div class="col-lg-4 col-md-6 col-sm-6">
+    			<div class="panel panel-default">
+    		 		<div class="panel-heading">
+              <h3>Minutes list</h3>
+
+
+
+    		 		</div>
+
+    		 		<div class="panel-body">
+              <div id="grid3" ui-grid="minuteGridOptions" class="grid"></div>
+    		 	  </div>
+          </div>
+    </div>
+    <!--------- END MINUTE PANEL----->
+
+    <!--------- MINUTE PANEL----->
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        			<div class="panel panel-default">
+        		 		<div class="panel-heading">
+                  <h3>Report list</h3>
+                  <span class="pull-right">
+                    <button class="btn btn-default">Add report <span class="glyphicon glyphicon-plus"></span></button>
+                    <button class="btn btn-default">Import report <span class="glyphicon glyphicon-import"></span></button>
+                  </span>
+
+                  <form ng-if="moreOptionsReport" class="form-inline">
+                    <!--Date from:
+                      <input type="date" ng-model="meetingStartDate" style="color:black">
+                      to:
+                      <input type="date" ng-model="meetingEndDate" style="color:black">-->
+                  </form>
+
+        		 		</div>
+
+        		 		<div class="panel-body">
+                  <div id="grid3" ui-grid="reportGridOptions" class="grid"></div>
+
+        		 	  </div>
+              </div>
+        </div>
+    <!--------- END MINUTE PANEL----->
+
+  </div>
+
+
+
+</div>
+
+
+
+<!-- MODAL STUFF HERE--->
+<div class="modal fade modal-fullscreen" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="calendar-modal" aria-hidden="true">
+	  <div class="modal-dialog ">
+	    <div class="modal-content">
+	    	<div class="modal-header">
+	    		<span type="button" class="glyphicon glyphicon-remove" id="close-calendar"><span>
+	    	</div>
+	    	<div class="modal-body">
+	    		<iframe id="responsive-iframe" src="https://www.google.com/calendar/embed?src=vi.vietnamese%23holiday%40group.v.calendar.google.com&ctz=Australia/Hobart" style="border: 0" frameborder="0" scrolling="no"></iframe>
+	    	</div>
+	    </div>
+	  </div>
+	</div>
+
+
+

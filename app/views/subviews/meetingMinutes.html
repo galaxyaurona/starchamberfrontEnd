@@ -1,0 +1,64 @@
+<div class="container-fluid">
+  <split-pane style="height: 70vh">
+    <!--first pane-->
+    <split-pane-component width="65%">
+
+      <br><hr>
+      <h3>Additional Note:</h3>
+      <text-angular ng-show="manager" ng-model="minuteNote" ng-change="saveNote(minuteNote)"></text-angular>
+      <div class="container-fluid" id="displayHTML" >
+
+
+      </div>
+    </split-pane-component>
+
+    <split-pane-divider width="3px"></split-pane-divider>
+    <!--second pane-->
+    <split-pane-component style="padding:10px">
+      <input type="checkbox" ng-model="hideDebugInfo"/>Hide debug info
+      <accordion>
+        <accordion-group ng-repeat="item in agendaItems.approved" heading="{{item.title}}">
+          <pre ng-hide="hideDebugInfo">{{prettifyJSON(item)}}</pre>
+          <h3>Description: <small>{{item.description}}</small></h3>
+          <h4>Duration: <small> {{item.duration}} minutes</small></h4>
+          <!-- attachment panel-->
+          <div class="panel">
+            <div class="panel-heading">
+              <h4>Attachment:</h4>
+            </div>
+            <div class="panel-body">
+              <ul class="list-group">
+                <li class="list-group-item" ng-repeat="(key, value) in item.attachment">
+                  <h4>{{key}}: <small>{{value}}</small></h4>
+                </li>
+              </ul>
+            </div>
+          </div>
+        <!--Voting panel-->
+          <div class="panel">
+            <div class="panel-heading">
+              <h4>Decision:</h4>
+            </div>
+            <div class="panel-body">
+
+              <canvas ng-if="manager" id="pie" class="chart chart-pie" data="item.decisionsData"
+                labels="item.decisionsLabels" legend="true"></canvas>
+
+              <ul class="list-group">
+                <li class="list-group-item" ng-repeat="(key, value) in item.decisions">
+                  <label><input type="radio" name="item.id" ng-click="voteFor(item,value.dName)"> {{value.dName}} </label>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+          <hr>
+          Additional note:<br>
+          <textarea class="form-control" ng-model="item.notes"></textarea>
+
+        </accordion-group>
+      </accordion>
+
+    </split-pane-component>
+  </split-pane>
+</div>
