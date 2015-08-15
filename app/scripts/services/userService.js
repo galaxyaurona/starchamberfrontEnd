@@ -13,7 +13,7 @@ angular.module('starChamberUiApp')
     var userFactory = {}; // empty userFactory object
     userFactory.userData = {};
 
-    /*userFactory.login = function(loginInfo){
+    userFactory.login = function(loginInfo){
        //TODO: calling proper API backend to login
      var mockToken = undefined;
       if ((loginInfo.username == 'manager') && (loginInfo.password == 'manager')){
@@ -25,10 +25,10 @@ angular.module('starChamberUiApp')
       }
       AuthToken.setToken(mockToken);
       return angular.isDefined(mockToken);
-    };*/
+    };
 
     //----------- REAL LOGIN METHOD HERE WITH BACK END----------------
-    userFactory.login = function(loginInfo){
+    /*userFactory.login = function(loginInfo){
 	 console.log(loginInfo)
 	 var req = {
         method:'POST',
@@ -43,7 +43,7 @@ angular.module('starChamberUiApp')
         AuthToken.setToken(response.token) // must agree with back end that json token from key token
         return response; // the actual object that login return
       })
-    }
+    }*/
 
     userFactory.isLogin = function (){  // function to determined if they are logged in
 
