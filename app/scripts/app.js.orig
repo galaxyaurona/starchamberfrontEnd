@@ -1,0 +1,186 @@
+'use strict';
+var CKEDITOR_BASEPATH='scripts/ckeditor/';
+/**
+ * @ngdoc overview
+ * @name starChamberUiApp
+ * @description
+ * # starChamberUiApp
+ *
+ * Main module of the application.
+ */
+angular
+  .module('starChamberUiApp', [
+    'ngRoute',
+    'SCNavBarDirective',
+	  'ui.router',
+      'chart.js',
+      'textAngular',
+      'ckeditor',
+    'angular.panels',
+    'ui.grid',
+    'ui.grid.selection',
+    'ngBootbox',
+    'flow',
+    'ui.uploader',
+    'shagstrom.angular-split-pane',
+    'ui.bootstrap.accordion',
+    'ngResource',
+	'ui.bootstrap',
+	'xeditable'
+  ])
+  .config(function ($routeProvider,$locationProvider,$httpProvider) {
+    //$httpProvider.defaults.headers.common['Access-Control-Allow-Headers'] = '*';
+    $httpProvider.defaults.headers.common["X-UserInfo"] = "Shawn the sheep";
+    $routeProvider
+      .when('/test',{
+        templateUrl:'views/test.html',
+        controller:'TestCtrl'
+      })
+      .when('/login',{
+        templateUrl:'views/login.html',
+        controller:'LoginCtrl'
+      })
+      .when('/concern',{
+        templateUrl:'views/concern.html',
+        controller:'ConcernCtrl',
+        resolve:{
+          //TODO: implement these resolve
+          concerns: function(UserService,ConcernService){
+
+
+            return ConcernService.getConcerns(UserService.userData.board.id)
+          }
+        }
+      })
+      .when('/dashboard',{
+        templateUrl:'views/dashboard.html',
+        controller:'DashboardCtrl',
+        resolve:{
+          minutes: function(minuteService,UserService){
+
+          },
+          meetings:function(meetingService,UserService){
+              return meetingService.getMeetings(UserService);
+          },
+          reports:function(reportService,UserService){
+
+          }
+        }
+      })
+      .when('/meeting', {
+        templateUrl: 'views/meetingmanager.html',
+        controller: 'MeetingCtrl',
+        resolve: {
+			meeting:function($route,meetingService) {
+				return meetingService.getMeeting($route.current.params.id);
+				  },
+				  //Invites are included in the meeting directly as they get used in multiple sub views.
+				invites:function($route,meetingService){
+				return meetingService.getInvitesMeeting($route.current.params.id);
+				}
+			}
+      })
+      .otherwise({
+        redirectTo: '/login'
+      });
+    //$locationProvider.html5Mode(true);
+  })
+
+  .run(function($rootScope,$location,$route,UserService,$http){
+
+    $rootScope.console = console;
+    $rootScope.checkSecurityClearance = function(){
+      if(UserService.isLogin()){ // user is login
+
+        // and try to go back to login page prevent double login
+        if ($location.path() == "/login"){
+          if (UserService.userData.importantRole){
+            $location.path('/dashboard');
+          }else{
+            $location.path('/concern');
+          }
+        }
+        // illegal access to dashboard, redirect back to concern
+        if (($location.path() != '/concern') && (!UserService.userData.importantRole))
+          $location.path('/concern');
+
+      }else{ // user not logged in, redirect to login
+        if ($location.path()!='/test'){
+          $location.path("/login");
+        }
+
+      }
+    };
+
+
+    // do security check when route change start
+    $rootScope.$on('$routeChangeStart', function(event,next,current){
+      /*if (angular.isDefined(current) && current.$$route.originalPath =='/dashboard'){
+        event.preventDefault();
+      }*/
+      console.log(navigator);
+      $http.post("https://api.ipify.org/?format=json").success(function (response) {
+        console.log(response);
+      });
+      $rootScope.checkSecurityClearance();
+    });
+    $rootScope.prettifyJSON = function(rawJSON){
+      return JSON.stringify(rawJSON, null, 2);
+    }
+
+    $rootScope.dateConverter = function(date,reverse){
+      //console.log(dateInLong);
+      //console.log(dateInLong+' becomes '+new Date(dateInLong));
+      if (reverse) { // this date is who
+        var convertedDate = date/60/1000;
+      }else{
+        var convertedDate =new Date(date*60*1000);
+
+      }
+      return convertedDate;
+    }
+      $rootScope.timeConverter = function(date,millisecondFromMidnight,reverse){
+        var timeZoneOffSetInMinute = new Date().getTimezoneOffset();
+        //console.log(millisecondFromMidnight+' becomes '+Math.floor(timeInt) + (timeInt%1)*60);
+        // convert floating point to minute
+        if (reverse){
+
+        }else{
+          var dateConverted = new Date((millisecondFromMidnight + date - timeZoneOffSetInMinute) * 60 * 1000);
+
+          var minute = dateConverted.getMinutes();
+          minute = minute > 9 ? "" + minute : "0" + minute;
+
+          return dateConverted.getHours() + ":" + minute;
+        }
+
+
+
+      }
+
+    //--------------------------------TIME ZONE CONVERSION------------------------------------------------------------
+    	 //When converting a time and date that are seperate ensure to call Time converter before Date converter
+    	//For converting times from GMT - currently hard coded to melbourne time from GMT
+    	 $rootScope.timeFromZoneConverter = function(time){
+
+			var temp2 = new Date(time*60*1000);
+			var temp = new Date(temp2.valueOf() + temp2.getTimezoneOffset() * 60000);
+
+			var minute = temp.getMinutes();
+			var minutes = temp.getMinutes() > 9 ? "" + minute : "0" + minute;
+			return  temp.getHours() + ":" + minutes;
+    	 }
+    	 //For converting date objects from GMT, since date objects get a time, add relevant time to it incase of day transfer
+    	$rootScope.dateFromZoneConverter = function(date,time){
+			var tempDate = new Date(date*1000*60);
+			var tempTime = new Date(time*1000*60);
+			tempDate.setHours(tempTime.getHours());
+			tempDate.setMinutes(tempTime.getMinutes());
+    		return (tempDate.getDate() + "/" + (tempDate.getMonth()+1) + "/" + tempDate.getFullYear());
+    	}
+
+
+  })
+  .run(function(editableOptions) {
+	editableOptions.theme = 'bs3';
+});

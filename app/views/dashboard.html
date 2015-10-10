@@ -1,40 +1,137 @@
 <div class="container-fluid">
   <div class="row">
-    <!---------CALENDAR PANEL----->
-    <div class="col-lg-5 col-md-12 col-sm-12">
+    <!--------CALENDAR PANEL---->
+    <div class="col-lg-6 col-md-12 col-sm-12">
       <div class="panel panel-default" id="reminder-panel">
 
         <div class="panel-heading">
           <h3> Meeting calendar</h3>
           <span class="pull-right">
-            <button id="show-calendar" class="btn btn-default pull-right">Show full calendar<span class="glyphicon glyphicon-calendar"></span></button>
-            <a ng-if="manager" href="#/meeting?id=new" class="pull-right"><button class="btn btn-default">Schedule new meeting  <span class="glyphicon glyphicon-plus"></span></button></a>
+           <!-- <button id="show-calendar" class="btn btn-default pull-right"><span class="glyphicon glyphicon-calendar"></span></button>-->
+			<button ng-if="manager" class="btn btn-default pull-right" ng-click="createNewMeeting()"><span class="glyphicon glyphicon-plus"></span></button>
           </span>
+          <div class="row">
+            <div class="col-sm-7 col-lg-8 col-md-9">
+              <div class="input-group" style="margin-bottom: 5px">
+                <span class="input-group-addon glyphicon glyphicon-search glyphicon-no-top"> </span>
+                <input class="form-control" type="text" ng-model="queryInvite.meeting.name"
+                       placeholder="Search meeting title...">
+              </div>
+            </div>
 
-          </form>
+            <div class="form-inline">
+              Status:
+              <select class="form-control" ng-options="status as status for status in statuses" ng-init="queryInvite.meeting.state = statuses[0]" ng-model="queryInvite.meeting.state" ng-change="console.log(queryInvite)">
+              </select>
+            </div>
+          </div>
+
+
+
+            <!--Date from:
+            <input type="date" ng-model="meetingStartDate" style="color:black">
+            to:
+            <input type="date" ng-model="meetingEndDate" style="color:black">-->
+
 
         </div>
 
         <div class="panel-body">
-          <div id="grid2" ui-grid="meetingGridOptions" class="grid"></div>
+               <table class="table table-striped">
 
-        </div>
+                 <th colspan="4"><a ng-click="order('meeting','title',reverse);reverse=!reverse">Meeting Title</a></th>
+                 <th colspan="2"><a ng-click="order('meeting','status',reverse);reverse=!reverse">Scheduling status</a></th>
+                 <th colspan="1">Meeting status</th>
+                 <tbody style="overflow: scroll;height:10px">
+
+                 <!-- TODO: FIX meeting query here -->
+
+                   <tr ng-repeat="invite in invites | filter:queryInvite">
+
+                     <td colspan="4"><a ng-href="/#/meeting/?id={{invite.meeting.id}}">{{invite.meeting.name}}</a></td>
+
+                     <td colspan="2">
+                       <span ng-if="invite.meeting.state == 'Scheduled' && invite.meeting.cancelled == false">
+                        Starting {{dateFromZoneConverter(invite.meeting.date,invite.meeting.time).from(moment())}}
+                       </span>
+					             <span ng-if="invite.meeting.state == 'Polling' && invite.meeting.cutoffDate != undefined && invite.meeting.cancelled == false">
+                        Poll Closes {{dateFromZoneConverter(invite.meeting.cutoffDate,invite.meeting.cutoffTime).from(moment())}}
+                       </span>
+                       <span ng-if="invite.meeting.state == 'Pending' && invite.meeting.cutoffDate != undefined && invite.meeting.cancelled == false">
+                        Poll Closed {{dateFromZoneConverter(invite.meeting.cutoffDate,invite.meeting.cutoffTime).from(moment())}}
+                       </span>
+                       <span ng-if="invite.meeting.state == 'Lobby' && invite.meeting.cancelled == false">
+                        Starting {{dateFromZoneConverter(invite.meeting.date,invite.meeting.time).from(moment())}}
+                       </span>
+                       <span ng-if="invite.meeting.state == 'Meeting' && invite.meeting.cancelled == false">
+                        Active {{dateFromZoneConverter(invite.meeting.date,invite.meeting.time).from(moment())}}
+                       </span>
+                     </td>
+
+                     <td colspan="1">
+                       <span class="glyphicon glyphicon-question-sign glyphicon-large" ng-if="invite.meeting.state=='Polling'" tooltip='Polling' tooltip-placement="right"></span>
+                       <span class="glyphicon glyphicon-eye-open glyphicon-large" ng-if="invite.meeting.state=='Pending'" tooltip='Pending' tooltip-placement="right"></span>
+                       <span class="glyphicon glyphicon-time glyphicon-large" ng-if="invite.meeting.state=='Scheduled'" tooltip='Scheduled' tooltip-placement="right"></span>
+                       <span class="glyphicon glyphicon-briefcase glyphicon-large" ng-if="invite.meeting.state=='Meeting'" tooltip='Meeting' tooltip-placement="right"></span>
+                       <span class="glyphicon glyphicon-flag glyphicon-large" ng-if="invite.meeting.state=='Lobby'" tooltip='Lobby' tooltip-placement="right"></span>
+					   <span class="glyphicon glyphicon-remove-sign glyphicon-large" ng-if="invite.meeting.cancelled" tooltip='Cancelled' tooltip-placement="right"></span>
+						<span class="glyphicon glyphicon-exclamation-sign glyphicon-large" ng-if="invite.meeting.reschedule" tooltip='Re-Scheduled' tooltip-placement="right"></span>
+
+                     </td>
+
+                   </tr>
+                 </tbody>
+               </table>
+
+             </div>
 
       </div>
     </div>
     <!--------- END CALENDAR PANEL----->
     <!--------- MINUTE PANEL----->
-    <div class="col-lg-4 col-md-6 col-sm-6">
+    <div class="col-lg-3 col-md-6 col-sm-6">
     			<div class="panel panel-default">
     		 		<div class="panel-heading">
               <h3>Minutes list</h3>
 
+              <div class="input-group">
+                <span class="input-group-addon glyphicon glyphicon-search glyphicon-no-top"> </span>
+                <input  class="form-control" type="text" ng-model="queryMinute.title" placeholder="Search meeting title...">
+                <!-- <span class="input-group-btn"><button class="btn btn-default" ng-click="toggleMoreOption('minute')">More options</button> </span>-->
+              </div>
 
+              <form ng-if="moreOptionsMinute" class="form-inline">
+                <!--Date from:
+                  <input type="date" ng-model="meetingStartDate" style="color:black">
+                  to:
+                  <input type="date" ng-model="meetingEndDate" style="color:black">-->
+              </form>
 
     		 		</div>
 
     		 		<div class="panel-body">
-              <div id="grid3" ui-grid="minuteGridOptions" class="grid"></div>
+              <table class="table table-striped">
+
+                <th colspan="4"><a ng-click="order('minute','title',reverse);reverse=!reverse">Meeting Title</a></th>
+                <th colspan="2"><a ng-click="order('minute','date',reverse);reverse=!reverse">Meeting date</a></th>
+                <th colspan="1">Export</th>
+                <th colspan="1">Open</th>
+
+                <tbody style="overflow: scroll;height:10px">
+
+                  <tr ng-repeat="minute in minutes | filter:queryMinute ">
+                    <td colspan="4">{{minute.title}}</td>
+                    <td colspan="2">{{minute.date| date:mediumDate}}</td>
+                    <td colspan="1">
+                      <a ng-href="#/wip"><span class="glyphicon glyphicon-export glyphicon-large"></span></a>
+                    </td>
+                    <td colspan="1"><a ng-href="#/wip"><span class="glyphicon glyphicon-open-file glyphicon-large"></span></a></td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+
     		 	  </div>
           </div>
     </div>
@@ -46,9 +143,14 @@
         		 		<div class="panel-heading">
                   <h3>Report list</h3>
                   <span class="pull-right">
-                    <button class="btn btn-default">Add report <span class="glyphicon glyphicon-plus"></span></button>
-                    <button class="btn btn-default">Import report <span class="glyphicon glyphicon-import"></span></button>
+                    <button class="btn btn-default"> <span class="glyphicon glyphicon-plus"></span></button>
+                    <button class="btn btn-default"> <span class="glyphicon glyphicon-import"></span></button>
                   </span>
+                  <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-search glyphicon-no-top"> </span>
+                    <input  class="form-control" type="text" ng-model="queryReport.title" placeholder="Search report title...">
+                    <!--<span class="input-group-btn"><button class="btn btn-default" ng-click="toggleMoreOption('report')">More options</button> </span>-->
+                  </div>
 
                   <form ng-if="moreOptionsReport" class="form-inline">
                     <!--Date from:
@@ -60,7 +162,25 @@
         		 		</div>
 
         		 		<div class="panel-body">
-                  <div id="grid3" ui-grid="reportGridOptions" class="grid"></div>
+                  <table class="table table-striped">
+
+                    <th colspan="4"><a ng-click="order('report','title',reverse);reverse=!reverse">Meeting Title</a></th>
+                    <th colspan="2"><a ng-click="order('report','date',reverse);reverse=!reverse">Meeting date</a></th>
+                    <th colspan="1">Raw version</th>
+                    <th colspan="1">Open</th>
+
+                    <tbody style="overflow: scroll;height:10px">
+                      <tr ng-repeat="report in reports | filter:queryReport ">
+
+                        <td colspan="4">{{report.title}}</td>
+                        <td colspan="2">{{report.date| date:mediumDate}}</td>
+                        <td colspan="1"><a ng-ref="#/wip"><span class="glyphicon glyphicon-open glyphicon-large"></span></a></td>
+                        <td colspan="1"><a ng-href="#/wip"><span class="glyphicon glyphicon-open-file glyphicon-large"></span></a></td>
+
+                      </tr>
+                    </tbody>
+
+                  </table>
 
         		 	  </div>
               </div>
@@ -80,7 +200,7 @@
 	  <div class="modal-dialog ">
 	    <div class="modal-content">
 	    	<div class="modal-header">
-	    		<span type="button" class="glyphicon glyphicon-remove" id="close-calendar"><span>
+	    		<span type="button" class="glyphicon glyphicon-remove" id="close-calendar"></span>
 	    	</div>
 	    	<div class="modal-body">
 	    		<iframe id="responsive-iframe" src="https://www.google.com/calendar/embed?src=vi.vietnamese%23holiday%40group.v.calendar.google.com&ctz=Australia/Hobart" style="border: 0" frameborder="0" scrolling="no"></iframe>

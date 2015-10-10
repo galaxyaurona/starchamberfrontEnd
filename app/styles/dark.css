@@ -1,0 +1,176 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto);
+body,html { overflow-x:hidden; }
+*{
+    font-family: Roboto,sans-serif;
+}
+
+
+
+body {
+  padding: 0;
+  height: 100%;
+  background:#C6D2D4;
+}
+html{
+  height:100%;
+}
+/*------------OVERALL THEME------------------*/
+/*PANEL STUFF HERE*/
+.panel{
+    border-color: #1B4C56;
+}
+.panel .panel-heading{
+    color:#ffffff;
+    background:#1B4C56;
+}
+.panel .panel-heading a {
+  color:#ffffff;
+}
+.panel .panel-body{
+	background:#B9CBCE;
+}
+/*FOR PANEL WITH SHOW FULL CALENDAR OPTION*/
+.panel .panel-heading >h3{
+  display: inline-block;
+}
+.panel .panel-heading .pull-right .btn{
+  margin:2px;
+}
+
+.panel .panel-heading .input-group{
+  clear:both;
+}
+
+.panel-footer{
+   background:#1B4C56;
+    color:#ffffff;
+    height:inherit;
+}
+
+/* Sub panel theme for meeting agenda */
+.panel-heading-agenda{
+	color:#ffffff;
+    background:#1B4C56;
+	border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+/*Overall modal theme*/
+.modal {
+	color:black;
+}
+
+.modal .modal-header {
+	background-color: #156D81;
+	color:white;
+}
+.modal .modal-body {
+	background-color: white;
+}
+
+.modal-fullscreen {
+	overflow:hidden;
+}
+.modal-fullscreen .modal-content,.modal-fullscreen .modal-dialog {
+
+	height:90%;
+	width:98%;
+}
+.modal-fullscreen .modal-body {
+	margin:0px;
+	padding:0px;
+	height:100%;
+	width:100%;
+}
+
+.glyphicon-large
+{
+  font-size:2em;
+}
+
+/* Everything but the jumbotron gets side spacing for mobile first views */
+.header,
+.marketing,
+.footer {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.avatar{
+  width:40px;
+  heigh:40px;
+  padding:5px 0px;
+}
+.boardname{
+  text-align: center;
+  font-size:1.5em;
+  color: floralwhite;
+  padding:2px 0px;
+}
+.no-padding{
+  padding:0px;
+}
+/*FOOTER CSS*/
+.footer {
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 4em;
+  background-color: #212121;
+  color:white;
+  clear: both;
+}
+
+.wrapper {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -4em;
+}
+.push {
+  height: 4em;
+  clear: both;
+}
+textarea {
+    resize: none;
+}
+
+/*END FOOTER CSS*/
+/*DASHBOARD CSS*/
+
+/* Dashboard calendar*/
+#responsive-iframe {
+	width: inherit;
+	height:100%;
+}
+
+.btn-danger{
+  color:#fff !important;
+}
+
+/*END DASHBOARD CSS*/
+.split-pane-divider {
+  background: #156D81;
+}
+
+.split-pane-component {
+  border: solid 5px #156D81;
+  background: #fff;
+}
+/*split pane css*/
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+  .container {
+    max-width: 730px;
+  }
+
+  /* Remove the padding we set earlier */
+  .header,
+  .marketing,
+  .footer {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  /* Space out the masthead */
+  .header {
+    margin-bottom: 30px;
+  }
+  /* Remove the bottom border on the jumbotron for visual effect */
+}

@@ -3,9 +3,15 @@
   "version": "0.0.0",
   "dependencies": {
     "bower": "^1.4.1",
+    "compression": "^1.5.2",
+    "express": "^4.13.3",
     "grunt-cli": "^0.1.13",
+    "karma": "^0.13.9",
     "load-grunt-tasks": "^3.1.0",
-    "time-grunt": "^1.2.0"
+    "moment-timezone": "^0.4.0",
+    "morgan": "^1.6.1",
+    "time-grunt": "^1.2.0",
+    "grunt":"*"
   },
   "repository": {},
   "devDependencies": {
@@ -41,7 +47,6 @@
   },
   "scripts": {
     "test": "grunt test",
-    "postinstall": "bower install",
-    "start": "grunt serve:dist"
+    "start": "node server.js"
   }
 }

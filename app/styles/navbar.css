@@ -21,7 +21,9 @@
 }
 .navbar-brand{
   font-size:2.2em;
+  padding-top:8px
 }
+
 .white{
   color:white!important;
 }

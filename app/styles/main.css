@@ -127,7 +127,9 @@ html{
 textarea {
     resize: none;
 }
-
+.glyphicon-no-top{
+  top:0px;
+}
 /*END FOOTER CSS*/
 /*DASHBOARD CSS*/
 
@@ -169,4 +171,16 @@ textarea {
     margin-bottom: 30px;
   }
   /* Remove the bottom border on the jumbotron for visual effect */
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.clickable{
+	cursor: pointer;
+}
+.verticalLine {
+    border-right: solid thin #156D81;
+    border-left: solid thin #156D81;
 }

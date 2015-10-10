@@ -1,37 +1,43 @@
 <div class="container-fluid">
-	<div class="row"><!-- for some reason without this the size is off -->
+	<div class="row">
 		<div class="panel">
 		<div class="panel-heading">
-			<p> Poll closed </p><!-- this is static untill it can be fetched -->
+			<div class="row">
+					<div class="col-md-9 col-lg-9 col-sm-9">
+						<p style="margin:5px">Poll Closed on {{dateFromZoneConverter(meeting.cutoffDate,meeting.cutoffTime) | amDateFormat: 'dddd, MMMM Do YYYY' }} ,
+									{{timeFromZoneConverter(meeting.cutoffDate,meeting.cutoffTime) | amDateFormat: ' h:mm a'}}</p>
+					</div>
+					<div class="col-md-3 col-sm-3 col-lg-3  ">
+					<button type="button" ng-if="manager" class="btn btn-default btn-sm pull-right" ng-click="showCutoffModal()" style="float:right;margin-right:5px">
+				Re-schedule </button>
+				</div>
+				</div>
+
 		</div>
 		<div class="panel-body">
 			<div class="row">
-					<div ng-repeat="i in meeting.pollItems">
-						<div class="col-md-9">
-							<div class="container" style="height:.5em;">
-							</div>
-							<!-- The progress bars will need to be redone somehow to not be limited
-							Due to the rotation they cant be longer than the div they were inside !-->
-							<div class="progress vertical" popover-placement="right" popover="This is where names appear!" popover-trigger="mouseenter">
-								<progressbar value="(i.votedId.length/meeting.invite.length)*100 | number:2" min="0" max="100">
-								<!-- This progress bar should be changed to the angular-bootstrap version instead of the normal bootstrap-->
-									<span style="color:black; white-space:nowrap;">{{(i.votedId.length/meeting.invite.length)*100 | number:2}} %</span>
-									<!-- pretty much make this take the number of voted/invited*100 -->
-								</progressbar>
-							</div>
-							</div>
-							<div class="col-md-3">
-							{{i.date}} at {{i.time}}
-							<button ng-click="" class="btn btn-success btn-sm"  ng-if="manager">Confirm Time</button>
-							</div>
-						</div><!-- ng-repeat -->
+					<div class="col-md-7" style="max-width:600px">
+					<canvas id="doughnut" class="chart chart-doughnut chart-xs ng-isolate-scope" data="pollData.data" labels="pollData.label" legend="true" height="261" width="400" style="width: 400px; height: 261px;"
+					colours = ['#4C91A1','#2E7C8E','#156C81','#0A5668','#02414F','#8DC1CE','#01232B'];></canvas>
+					</div>
+					<div class="col-md-5">
+				<ul class="list-group">
+						<li class="list-group-item" ng-repeat="i in formattedAvailabilities">
+						<!-- TODO: Make this display a percentage -->
+						<label>{{i.date  | amDateFormat: 'dddd, MMMM Do YYYY' }}
+						  {{i.timeStart | amDateFormat: ' h:mm a' }}  to {{i.timeEnd | amDateFormat: ' h:mm a' }}</label>
+              <button type="button" ng-if="manager && (meeting.date == undefined || meeting.date == 0)" class="btn btn-default btn-sm pull-right" style="float:right;margin-right:5px" ng-click="setMeeting(i.tempDate,i.tempTimeStart)">
+              Choose this date </button>
+            </li>
+					</ul>
+					</div>
 			</div><!-- /row -->
 			<div class="row" style="height:1em"></div>
 			<div class="row">
 				<div style="padding-left:5em">
-				<button type="button" ng-if="manager" class="btn btn-warning" data-toggle="modal" data-target="#reModal">
-				Re-schedule </button>
 				</div>
+
+
 				<!-- modal for re-scheduling the meeting-->
 				<div id="reModal" class="modal fade" role="dialog">
 					<div class="modal-dialog">
@@ -43,14 +49,14 @@
 							</div>
 							<div class="modal-body">
 								Enter new poll cut off date
-								<form class="simple-form" ng-submit=""> <!-- this should clear previous times -->
-									<input type="date" class="form-control" ng-model="date" placeholder="Date...">
-									<input type="time" ng-model="time" placeholder="Time...">
+								<form class="simple-form" ng-submit="reschedule(cutoffDatePicker,cutoffTimePicker)"> <!-- this should clear previous times -->
+									<input type="date" class="form-control" ng-model="cutoffDatePicker" >
+									<input type="time" ng-model="cutoffTimePicker">
 									<button type ="submit" class="btn btn-default">Submit</button>
 								</form>
 							</div>
 							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								<div class="alert alert-danger" style="text-align:center">Warning! Re-Starting polling will remove all existing times!</div>
 							</div>
 						</div>
 					</div>

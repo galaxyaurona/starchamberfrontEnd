@@ -8,125 +8,70 @@
  * Controller of the starChamberUiApp
  */
 angular.module('starChamberUiApp')
-  .controller('DashboardCtrl', function ($log,$scope,$rootScope,$location,$filter,UserService,meetingService,uiGridConstants,meetings,reports,minutes) {
+  .controller('DashboardCtrl', function ($log,$scope,$rootScope,$location,$filter,UserService,meetingService,meetings,$window) {
+	  console.log(UserService.userData);
  // status : scheduled- pending - polling
      // scheduled: modified or rescheduled or cancelled or modifiable
      // pending: polling
+	 $scope.invites = meetings;
+	 console.log($scope.invites);
      if (UserService.userData.role == "manager"){
        $scope.manager = true;
      }else {
        $scope.manager = false;
      }
      $rootScope.boardName="Dashboard";
-
-     var schedulingStatuses = [];
-    $scope.meetings = angular.copy(meetingService.getMeetings(UserService.userData));
-    console.log($scope.meetings);
-    angular.forEach($scope.meetings, function (outterValue, key) {
-      if (schedulingStatuses.map(function (element) {
-          return element.value
-        }).indexOf(outterValue.state) == -1)
-        switch (outterValue.state){
-          case 0:outterValue.state="Polling";break;
-          case 1:outterValue.state="Pending";break;
-          case 2:outterValue.state="Scheduled-Agenda open";break;
-          case 3:outterValue.state="Scheduled-Agenda closed";break;
-          default:outterValue.state="meeting";
-        }
-        schedulingStatuses.push({value: outterValue.state, label: outterValue.state})
-
-
+     $scope.reverse = false;
+     $scope.moreOptionsMeeting=false;
+     $scope.moreOptionsMinute=false;
+     $scope.moreOptionsReport=false;
+      localStorage.setItem("sampleInvite",JSON.stringify(meetings[0]))
+     $scope.queryInvite = {
+       "response": undefined,
+       "role": undefined,
+       "meeting": {
+         "name": undefined,
+         "description":undefined,
+         "state": undefined,
+         "reschedule": undefined,
+         "lastEditedDate": undefined,
+         "lastEditedTime": undefined,
+         "cancelled": undefined,
+         "board": undefined,
+         "id": undefined
+       },
+       "id": undefined
+     }
+    $scope.$watch("queryInvite",function(){
+      console.log($scope.queryInvite);
     })
-    var meetingColumnDefs = [
-      {
-        field: 'title',
-        cellTemplate: '<div class="ui-grid-cell-contents"><a ng-href="/#/meeting?id={{row.entity.id}}">{{row.entity.title}}</a></div>'
-      },
-      {
-        field: 'date',
-        cellFilter: 'date:"dd/MM/yyyy"',
-        filterCellFiltered: true,
-        width: '15%',
-      },
-      {
-        field: 'state',
-        filter: {
-          type: uiGridConstants.filter.SELECT,
-          selectOptions: schedulingStatuses
-        },
-        width: '30%'
-      },
-      {
-        field: 'conditions',
-        width: '30%',
-        enableFiltering: false,
-        cellTemplate: '<div class="ui-grid-cell-contents"><span ng-repeat="(key, value) in row.entity.conditions" ng-if="value"><strong>{{key}}</strong> </span></div>'
-      }
-    ]
 
-    $scope.meetingGridOptions = {
-      enableSorting: true,
-      enableFiltering: true,
-      enableHorizontalScrollbar:0,
-      enableVerticalScrollbar:0,
-      columnDefs: meetingColumnDefs,
-      data: $scope.meetings
+     $scope.queryMinute ={title:'',date:undefined};
+     $scope.statuses = ['','Polling','Pending','Scheduled','Meeting'];
 
-    }
-    var minuteColumnDefs = [
-      {
-        field: 'title',
-        cellTemplate: '<div class="ui-grid-cell-contents"><a ng-href="/#/minute/{{row.entity.id}}">{{row.entity.title}}</a></div>'
-      },
-      {
-        field: 'date',
-        cellFilter: 'date:"dd/MM/yyyy"',
-        filterCellFiltered: true,
-        width: '30%',
-      },
-      {
-        field: 'export',
-        width: '15%',
-        enableFiltering: false,
-        cellTemplate: '<div class="ui-grid-cell-contents"><a>Export</a></div>'
-      }
-    ]
-    $scope.minutes= [{title:"Monthly meeting's minute",date:new Date('18 Feb 2015 17:30:00'),url:"/#/test/#"},{title:"Weekly meeting's minute",date:new Date('12 March 2015 03:30:00'),url:"/#/test/#"}];
-    $scope.minuteGridOptions = {
-         enableSorting: true,
-         enableFiltering: true,
-         columnDefs: minuteColumnDefs,
-         data: $scope.minutes
 
-       }
-    var reportColumnDefs = [
-         {
-           field: 'title',
-           cellTemplate: '<div class="ui-grid-cell-contents"><a ng-href="/#/minute/{{row.entity.id}}">{{row.entity.title}}</a></div>'
-         },
-         {
-           field: 'date',
-           cellFilter: 'date:"dd/MM/yyyy"',
-           filterCellFiltered: true,
-           width: '30%',
-         },
-         {
-           field: 'export',
-           width: '15%',
-           enableFiltering: false,
-           cellTemplate: '<div class="ui-grid-cell-contents"><a>Export</a></div>'
-         }
-       ]
+     $scope.toggleMoreOption = function(panel){
+       if (panel == 'meeting')$scope.moreOptionsMeeting = !$scope.moreOptionsMeeting;
+       if (panel == 'minute')$scope.moreOptionsMinute = !$scope.moreOptionsMinute;
+       if (panel == 'report')$scope.moreOptionsReport = !$scope.moreOptionsReport;
+     };
+	 /*
+     $scope.meetings = meetingService.getMeetings(UserService.userData);
+     $log.debug($scope.meetings);
+		*/
+     $scope.minutes= [{title:"Monthly meeting",date:new Date('18 Feb 2015 17:30:00'),url:"/#/test/#"},{title:"Weekly meeting",date:new Date('12 March 2015 03:30:00'),url:"/#/test/#"}];
 
      $scope.reports= [{title:"Finance report",date:new Date('24 June 2015 17:30:00'),url:"/#/test/#"},{title:"Security report",date:new Date('29 February 2015 03:30:00'),url:"/#/test/#"}];
-    $scope.reportGridOptions = {
-         enableSorting: true,
-         enableFiltering: true,
-         columnDefs: reportColumnDefs,
-         data: $scope.reports
 
-       }
-;
+     var orderBy = $filter('orderBy');
+     $scope.order = function(target,predicate,reverse){
+
+       if ("meeting" == target) $scope.invites = orderBy($scope.invites, predicate, reverse);
+       if ("report" == target) $scope.reports = orderBy($scope.reports, predicate, reverse);
+       if ("minute" == target) $scope.minutes = orderBy($scope.minutes, predicate, reverse);
+
+     };
+     $scope.order('meeting','status',false);
 
 
 
@@ -135,8 +80,45 @@ angular.module('starChamberUiApp')
  	  $("#close-calendar").click(function () {
  	 	  $('#calendar-modal').modal('hide');
      });
-    $("#show-calendar").click(function () {
-      $('#calendar-modal').modal('show');
-    });
 
+	 $scope.createNewMeeting=function(){
+	console.log("Pressed");
+	console.log(UserService.userData);
+		var newMeeting = {
+        "name": "New Meeting",
+        "description": "",
+        "duration": 0,
+        "state": "Polling",
+        "quorum": 0,
+        "time":undefined,
+        "date": undefined,
+        "cutoffTime": undefined,
+        "cutoffDate": undefined,
+        "location": "",
+        "reschedule": false,
+        "lastEditedDate": Math.round(new Date().valueOf()/60/1000),
+        "lastEditedTime": Math.round(new Date().valueOf()/60/1000),
+        "cancelled": false,
+        "board": {
+          "key": UserService.userData.board.board.id
+        },
+        "availabilities": undefined,
+        "id": undefined
+      }
+		meetingService.postMeeting(newMeeting).then(function(data){
+      console.log("data:"+data.data.id);
+      var tempMeeting = data.data;
+     var newInvite = {
+     			id:undefined,
+     			meeting:{id:data.data.id},
+     			response:"pending",
+     			role:{key:UserService.userData.board.id}
+     		};
+      console.log(UserService.userData.board.id," and ",newInvite);
+      meetingService.postInvite(newInvite).then(function(response) {
+        $location.url("/meeting?id="+tempMeeting.id);
+      })
+
+
+   })};
   });

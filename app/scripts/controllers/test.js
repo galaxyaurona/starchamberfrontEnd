@@ -8,20 +8,22 @@
  * Controller of the starChamberUiApp
  */
 angular.module('starChamberUiApp')
-  .controller('TestCtrl', function ($scope,$rootScope,$filter,$http) {
-
+  .controller('TestCtrl', function ($scope,$rootScope,$filter,$http,meetingService,concernRESTService,meetingRESTService,userRESTService,UserService,ConcernService) {
+	  //meetingService.getMeeting("MEET27428").then(function(data){console.log(data)})
     // status : scheduled- pending - polling
     // scheduled: modified or rescheduled or cancelled or modifiable
     // pending: polling
-    $scope.backendRoute = "http://www.ltuteamg.com:8000/api/users/auth"
-    ;
+    //
+    //concernRESTService.getConcern({concernId:"001"},function(data){console.log(data)});
+
+    console.log("wait");
+    ConcernService.getConcerns(UserService.userData.board.id);
     $scope.submit = function(action){
-      console.log($scope.jsonData);
       if (!angular.isDefined($scope.jsonData)){
-        $scope.jsonDataParsed = {};
+        $scope.jsonData = {};
       }else{
         if (angular.isString($scope.jsonData))
-          $scope.jsonDataParsed = JSON.parse($scope.jsonData);
+          $scope.jsonData = JSON.parse($scope.jsonData);
       }
 
       $scope.method = "";
@@ -33,7 +35,6 @@ angular.module('starChamberUiApp')
 
       }
 
-
       $scope.config = "emtpy";
       $scope.header = "empty";
       $scope.data ="empty";
@@ -44,9 +45,8 @@ angular.module('starChamberUiApp')
         headers:{
           'Content-type': 'application/json'
         },
-        data: $scope.jsonDataParsed
+        data: $scope.jsonData
       }
-
       $http(req).then(function(response){
         $scope.success = true;
         $scope.response = JSON.stringify(response, null ,4);

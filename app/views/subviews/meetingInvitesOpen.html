@@ -10,9 +10,8 @@
 				</div>
 				<div class="modal-body">
 					<form class="simple-form">
-						<input type="text" class="form-control" ng-model="queryMember.name" placeholder="Enter Name...">
-						<!-- this could be replaced with a selector box that contains all current members (with filters to sort)
-						Need the back end to be able to provide all members and allow filtering to apply to the list, easy-->
+						<input type="text" class="form-control" ng-model="queryMember.userData.givenNames" placeholder="Enter First Name..."
+						tooltip-popup-delay='1000' tooltip='Enter a given name to filter results!'>
 					</form>
 					<div class="panel-body" style="overflow-y:scroll;height:200px">
 					<table class="table table-striped">
@@ -22,17 +21,17 @@
                 <th colspan="4"><a ng-click="">Role</a></th>
                 <th colspan="2"></th>
 
-                <tbody style="overflow: scroll;height:10px">
+                <tbody>
 
-                  <tr ng-repeat="member in memberDatabase | filter:queryMember ">
-                    <td colspan="4">{{member.name}}</td>
-                    <td colspan="2">{{member.id}}</td>
-                    <td colspan="4">{{member.role}}</td>
+                  <tr ng-repeat="member in boardRoles | filter:queryMember " style="overflow: scroll;height:10px">
+                    <td colspan="4">{{member.userData.title}}. {{member.userData.givenNames}}  {{member.userData.familyName}}</td>
+                    <td colspan="2">{{member.userData.id}}</td>
+                    <td colspan="4">{{member.roleList[0].name}}</td>
                     <td colspan="2">
-						<button class="btn btn-success" ng-if="!contains(meeting.invite,member)" ng-click="addInvited(member)">Add</button>
-						<button class="btn btn-danger" ng-if="contains(meeting.invite,member)" ng-click="deleteInvited(member)">Remove</button>
+						<button class="btn btn-success" ng-if="!contains(invitedNames,member)" ng-click="addInvited(member)">Add</button>
+						<button class="btn btn-danger" ng-if="contains(invitedNames,member)" ng-click="deleteInvited(member)">Remove</button>
 					</td>
-
+					</tr>
                 </tbody>
 
               </table>
@@ -49,25 +48,25 @@
 		<div class="panel">
 			<div class="panel-heading">
 				<div class="row">
-					<div class="col-md-9">
-						<p style="margin:5px">Invited Members - {{meeting.invite.length}}</p>
+					<div class="col-md-9 col-sm-9 col-lg-9">
+						<p style="margin:5px">Invited Members - {{invites.length}}</p>
 					</div>
-					<div class="col-md-3">
-						<button class="btn btn-danger btn-sm" ng-click="showNewInvite()">Add Member</button>
-					</div>
+          <div class="col-md-3 col-sm-3 col-lg-3">
+						<button class="btn btn-primary btn-sm pull-right" ng-click="showNewInvite()" style="float:right;margin-right:5px"
+						tooltip-popup-delay='1000' tooltip='Invite a new member' tooltip-placement="right">Add Member</button>
+          </div>
 				</div>
 			</div>
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-md-12" style="overflow-x:auto;max-height:6em">
-						<div ng-repeat="i in meeting.invite">
-							<div class="col-md-4">
-								<div class="col-md-6">
-									{{i.name}}
-								</div>
-								<div class="col-md-6">
-									<button class="btn btn-xs btn-danger" ng-click="deleteInvited(i)" ng-if="manager">X</button>
-								</div>
+						<div ng-repeat="i in invitedNames">
+							<div class="col-md-4 col-lg-4 col-sm-4">
+
+								<!-- TODO: Connect this to getting names -->
+									<span ng-class="{bold : i.userData.givenNames==UserService.userData.givenNames}">{{i.userData.title}}. {{i.userData.givenNames}} {{i.userData.familyName}}</span>
+
+
 							</div>
 						</div><!-- ng-repeat -->
 					</div><!-- /col-md-9 -->

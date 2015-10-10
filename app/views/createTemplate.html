@@ -1,0 +1,78 @@
+
+<div class="container-fluid" style="margin-bottom: 10px">
+  <div class="page-header">
+    <h2 style="margin-top: -30px">Create Template</h2>
+  </div>
+  <div class="row" style="padding-bottom: 10px">
+    <div class="col-sm-3">
+      <label class="control-label">Name</label>
+      <input type="text" class="form-control" ng-model="template.name"/>
+    </div>
+
+    <div class="col-sm-9">
+      <label class="control-label">Description</label>
+      <input type="text" class="form-control" ng-model="template.description"/>
+    </div>
+
+  </div>
+  <accordion close-others="false" panel-class="panel-success">
+    <accordion-group heading="{{key}}" ng-repeat="(key, item) in items">
+      <div class="col-sm-12">
+        <p ng-style="item" class="text-center" style="padding-bottom: 10px">{{key}}</p>
+      </div>
+
+      <div class="col-sm-3">
+        <strong>Font:</strong><select class="form-control" ng-options="font as font for font in fontOptions"
+                ng-model="item['font-family']">
+        </select>
+      </div>
+      <div class="col-sm-3">
+        <div class="col-sm-12">
+          <strong>Style</strong>
+        </div>
+
+        <div class="col-sm-6 checkbox">
+          <label>
+            <input type="checkbox" ng-true-value="'bold'" ng-false-value="'normal'" ng-model="item['font-weight']"/>
+            Bold
+          </label>
+
+        </div>
+        <div class="col-sm-6 checkbox" style="margin-top:10px">
+          <label>
+            <input type="checkbox" ng-true-value="'italic'" ng-false-value="'normal'" ng-model="item['font-style']"/>
+            Italic
+          </label>
+
+        </div>
+
+
+      </div>
+      <div class="col-sm-2">
+        <strong>Font-size:</strong>
+        <input class="form-control" type="number" min="5" max="30" ng-model="item['font-size']"/>
+      </div>
+      <div class="col-sm-4">
+        <div class="col-sm-12">
+          <strong>Color:</strong>
+        </div>
+
+        <div class="col-sm-6" style="padding: 0px">
+          <input colorpicker="rgb" class="form-control" type="text" ng-model="item.color"/>
+        </div>
+        <div class="col-sm-6" style="padding: 5px">
+          <button colorpicker="rgb" class="btn btn-primary" ng-model="item.color">Choose color</button>
+        </div>
+      </div>
+    </accordion-group>
+  </accordion>
+  <div class="row">
+
+
+  </div>
+  </div>
+  <button class="btn btn-success" ng-click="printDebug(item)">Print debug info</button>
+<button class="btn btn-success" ng-click="addTemplate(item)">Add template</button>
+</div>
+
+

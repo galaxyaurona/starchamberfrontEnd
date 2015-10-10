@@ -2,27 +2,64 @@
 	<!-- Page Modals -->
 	<!-- Add agenda Item modal -->
 	<div id="addItemModal" class="modal fade" role="dialog">
-		<div class="modal-dialog">
+		<div class="modal-dialog" style="width:800px">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 					<h4 class="modal-title">Item Details</h4>
 				</div>
 				<div class="modal-body">
-					<form class="simple-form" ng-submit="newItem(newTitle,newDesc,newTime)">
+				<div class="row">
+					<div class="col-md-4">
+					<h4> Details: </h4>
 						<input type="text" class="form-control" ng-model="newTitle" placeholder="Issue Name..." id="newTitle">
 						<input type="text" class="form-control" ng-model="newDesc" placeholder="Issue Description..." id="newDescription">
-						<div class="row">
-							<div class="col-md-6">
-								<input type="text" class="form-control" ng-model="newTime" placeholder="Time Requested in Minutes" id="newDuration">
-								<button class="btn btn-default" ng-click="">Attach concern/report</button>
+						<input type="text" class="form-control" ng-model="newTime" placeholder="Time Requested in Minutes" id="newDuration">
+						</div>
+							<div class="col-md-8">
+								<h4> Attachment: </h4>
+								<form ng-hide="selectedList == 'done'">
+
+								<label><input type="radio" ng-model="selectedList" value="concern" > concern </label>
+								<label><input type="radio" ng-model="selectedList" value="report"> report </label>
+								<label><input type="radio" ng-model="selectedList" value="discussionItem"> discussion item </label>
+								</form>
+
+								<!-- Concern selection table -->
+								<table class="table table-striped" ng-if="selectedList == 'concern'"> <!-- and if nothing is selected -->
+					                <th colspan="4"><a ng-click="">Title</a></th>
+					                <th colspan="2"><a ng-click="">Id</a></th>
+					                <th colspan="4"><a ng-click="">Description</a></th>
+					                <th colspan="2"></th>
+
+					                <tbody>
+
+					                  <tr ng-repeat="concern in concernList" style="overflow: scroll;height:10px">
+					                    <td colspan="4">{{concern.title}}</td>
+					                    <td colspan="2">{{concern.id}}</td>
+					                    <td colspan="4">{{concern.description}}</td>
+					                    <td colspan="2">
+											<button class="btn btn-success" ng-click="addConcernToItem(concern)">Add</button>
+										</td>
+										</tr>
+					                </tbody>
+					              </table>
+
+					              <!-- Report selection table -->
+					              <div ng-show="selectedList == 'done'">
+					              	<h5> Type: <small>{{selectedAttachmentType}}</small> </h5>
+					              	<h5> Title: <small>{{selectedAttachment.title}}</small> </h5>
+					              	<h5> Description: <small> {{selectedAttachment.description}}</small> </h5>
+					              	<button class="btn btn-default" ng-click="removeSelection()">Remove</button>
+					              </div>
 							</div>
 						</div>
-						<button type ="submit" class="btn btn-default">Submit</button>
-					</form>
 				</div>
 				<div class="modal-footer">
+				<button type ="button" class="btn btn-default" id="submit-Item" style="float:left;margin-left:5px">Submit</button>
+				</form>
 					<button type="button" class="btn btn-default" id="close-addItemModal">Close</button>
+					<alert ng-if="addFail" type="danger" close="" style="text-align: center;margin-top:10px">{{failMessage}}</alert>
 				</div>
 			</div>
 		</div>
@@ -33,167 +70,80 @@
 		<div class="panel">
 			<div class="panel-heading">
 				<div class="row">
-					<div class="col-md-4">
-						<button class="btn btn-warning btn-sm" style="margin:5px">20:25 15/4/2014 </button>
+					<div class="col-md-4  col-sm-2">
+						<H5 ng-if="meeting.date != null">Agenda Open till {{dateConverter(meeting.date) | date:'dd/MM/yyyy' }} </H5>
+						<!--TODO: Make the meeting open till date 24 hours behind -->
+						<H5 ng-if="meeting.date == null">Agenda Open</H5>
 					</div>
-					<div class="col-md-4">
-						<p style="text-align:center;margin:5px"> Agenda Items - {{agendaItems.pending.length}} pending</p>
+					<div class="col-md-4  col-sm-5">
+						<p style="text-align:center;margin:5px"> Approved: {{approvedItems}}, Pending: {{pendingItems}}, Rejected: {{rejectedItems}}</p>
 					</div>
-					<div class="col-md-4">
-						<button class="btn btn-default btn-sm" style="float:right;margin:5px" ng-click="showAddItemModal()"> Add Item </button>
-						<button class="btn btn-default btn-sm" style="float:right;margin:5px" ng-if="showRemovedItems && manager" ng-click="hideRemoved()"> Hide Removed </button>
-						<button class="btn btn-default btn-sm" style="float:right;margin:5px"  ng-if="!showRemovedItems && manager" ng-click="showRemoved()"> Show Removed </button>
+					<div class="col-md-4 col-sm-5 pull-right ">
+						<button class="btn btn-primary btn-sm" style="float:right;margin-right:5px" ng-click="showAddItemModal()"> Add Item </button>
+						<button class="btn btn-default btn-sm" style="float:right;margin-right:5px" ng-if="showRemovedItems && manager" ng-click="hideRemoved()"> Hide Removed </button>
+						<button class="btn btn-default btn-sm" style="float:right;margin-right:5px"  ng-if="!showRemovedItems && manager" ng-click="showRemoved()"> Show Removed </button>
 					</div>
 				</div>
 			</div><!-- /panel-heading -->
-			<div class="panel-body" style="padding-left:0px;padding-right:0px;padding-bottom:0px">
+			<div class="panel-body" style="padding:0px;magin-top:2px">
 			<!-- Approved items -->
-				<div ng-repeat="Item in agendaItems.approved">
-					<div class="panel-group" id="accordion" style="margin-bottom:2px">
-					  <div class="panel panel-default" style="margin:0px">
-						<div class="panel-heading-agenda clickable" href="javascript:;" data-toggle="collapse" data-parent="#accordion" data-target="#col--{{Item.id}}">
+			<div class="panel-group" id="accordion" style="margin-bottom:2px;margin-top:2px">
+				<div ng-repeat="Item in agendaItems | filter:queryAgendaOpen">
+					  <div class="panel panel-default" style="margin-top:2px;margin-left:0px;margin-right:0px;margin-bottom:2px" draggable="true">
+						<div class="panel-heading-agenda clickable">
 						  <h4 class="panel-title">
 							<a href="javascript:;" data-toggle="collapse" data-parent="#accordion" data-target="#col--{{Item.id}}">
 							 <div class="row">
-								<div class="col-md-8">
-									<h5>{{Item.title}}
+								<div class="col-md-10">
+									<h5 style="margin-left:10px">{{Item.title}}
 									- {{Item.duration}} Minutes</h5>
 								</div>
 								<div class="col-md-2">
-									<H5 style="text-align:right">Approved</H5>
-								</div>
-								<div class="col-md-2">
-								<button class="btn btn-success btn-sm"> </button>
-								</div>
-							</div>
-							</a>
-						  </h4>
-						</div>
-						<div id="col--{{Item.id}}" class="panel-collapse collapse">
-						  <div class="panel-body">
-								<div class="col-md-8">
-							<h3>{{Item.title}}</h3>
-							<h5>{{Item.description}}</h5>
-
-							<p>{{Item.duration}} Minutes Set
-							</p>
-
-							<p>Created by user: {{Item.userId}}</p>
-						</div>
-						<div class="col-md-4">
-							<h3>{{Item.attachment.title}}</h3>
-							<h5>{{Item.attachment.description}}</h5>
-							<!-- No idea how to actually make this only apear when the meeting type is something but ill figure it out later -->
-							<button class="btn btn-default" ng-click="">View Online</button>
-						</div>
-					</div>
-					<button ng-if="manager" class="btn btn-danger btn-sm" ng-click="deleteItem(Item)"> Remove Item</button>
-						  </div>
-
-						</div>
-					  </div>
-					</div>
-					<!-- Pending Items -->
-					<div ng-repeat="Item in agendaItems.pending">
-					<div class="panel-group" id="accordion" style="margin-bottom:2px"> <!-- no idea why group is repeated -->
-					  <div class="panel panel-default" >
-						<div class="panel-heading-agenda clickable" href="javascript:;" data-toggle="collapse" data-parent="#accordion" data-target="#col--{{Item.id}}">
-						  <h4 class="panel-title">
-							<a href="javascript:;" data-toggle="collapse" data-parent="#accordion" data-target="#col--{{Item.id}}">
-							 <div class="row">
-								<div class="col-md-8">
-								<H5>
-									{{Item.title}}
-									- {{Item.duration}} Minutes</H5>
-								</div>
-								<div class="col-md-2">
-									<H5 style="text-align:right">Pending</H5>
-								</div>
-								<div class="col-md-2">
-									<button class="btn btn-warning btn-sm"> </button>
+									 <span class="glyphicon glyphicon-question-sign glyphicon-large" ng-if="Item.approvalStatus == 'Pending'"  tooltip='Item Pending' tooltip-placement="right"></span>
+									 <span class="glyphicon glyphicon-ok-sign glyphicon-large" ng-if="Item.approvalStatus == 'Approved'"  tooltip='Item Approved' tooltip-placement="right"></span>
+									 <span class="glyphicon glyphicon-remove-sign glyphicon-large" ng-if="Item.approvalStatus == 'Rejected'"  tooltip='Item Rejected' tooltip-placement="right"></span>
+									<!-- TODO: put icons here instead of approvalStatus -->
 								</div>
 							</div>
 							</a>
 						  </h4>
 						</div>
 						<div id="col--{{Item.id}}" class="panel-collapse collapse">
-						  <div class="panel-body">
-						  <div class="row">
+							<div class="panel-body">
+							<div class="row">
 								<div class="col-md-8">
-							<h3>{{Item.title}}</h3>
-							<h5>{{Item.description}}</h5>
+									<h3>{{Item.title}}</h3>
+									<h5>{{Item.description}}</h5>
 
-							<p>{{Item.duration}} Minutes Set
-							</p>
+									<p>{{Item.duration}} Minutes Set
+									</p>
 
-							<p>Created by user: {{Item.userId}}</p>
-						</div>
-						<div class="col-md-4">
-							<h3>{{Item.attachment.title}}</h3>
-							<h5>{{Item.attachment.description}}</h5>
-							<!-- No idea how to actually make this only apear when the meeting type is something but ill figure it out later -->
-							<button class="btn btn-default" ng-click="">View Online</button>
-						</div>
-						</div>
-						<div class="row">
-						<button class="btn btn-success" ng-click="confirmItem(Item)" ng-if="!overTime">Confirm</button>
-						<button class="btn btn-danger" ng-click="denyItem(Item)">Deny</button>
-						</div>
-					</div>
-						  </div>
-						</div>
-					  </div>
-					</div>
-				<!-- Denied Items , Theres an issue that may be present with the objects sharing an ID, this shouldnt happen once connected to the server but keep an eye on it-->
-				<div ng-repeat="Item in agendaItems.denied" ng-if="showRemovedItems">
-					<div class="panel-group" id="accordion" style="margin-bottom:2px">
-					  <div class="panel panel-default">
-						<div class="panel-heading-agenda clickable" href="javascript:;" data-toggle="collapse" data-parent="#accordion" data-target="#col--{{Item.id}}">
-						  <h4 class="panel-title">
-							<a href="javascript:;" data-toggle="collapse" data-parent="#accordion" data-target="#col--{{Item.id}}">
-							 <div class="row">
-								<div class="col-md-8">
-									<H5>{{Item.title}}
-									- {{Item.duration}} Minutes</H5>
+									<p>Created by user: {{Item.raisedBy}}</p>
+								</div>
+								<div class="col-md-4">
+									<h3>{{Item.attachment.title}}</h3>
+									<h5>{{Item.attachment.description}}</h5>
+									<!-- No idea how to actually make this only apear when the meeting type is something but ill figure it out later -->
+									<button class="btn btn-default" ng-click="">View Attachment</button>
+								</div>
 								</div>
 								<div class="col-md-2">
-									<H5 style="text-align:right">Denied</H5>
-									<button class="btn btn-danger btn-sm"> </button>
+								<button class="btn btn-danger btn-sm" ng-click="deleteItem(Item)" ng-if="manager && Item.approvalStatus == 'Approved'" style="float:left;margin-left:10px"  > Remove Item</button>
+								<button class="btn btn-success" ng-click="confirmItem(Item)" ng-if="!overTime && manager && Item.approvalStatus == 'Pending'" >Confirm</button>
+								<button class="btn btn-danger" ng-click="denyItem(Item)" ng-if="manager && Item.approvalStatus == 'Pending'">Deny</button>
 								</div>
-								<div class="col-md-2">
+								<div class="col-md-10"></div>
 								</div>
 							</div>
-							</a>
-						  </h4>
-						</div>
-						<div id="col--{{Item.id}}" class="panel-collapse collapse">
-						  <div class="panel-body">
-								<div class="col-md-8">
-							<h3>{{Item.title}}</h3>
-							<h5>{{Item.description}}</h5>
+						 </div>
 
-							<p>{{Item.duration}} Minutes Set
-							</p>
-
-							<p>Created by user: {{Item.userId}}</p>
-						</div>
-						<div class="col-md-4">
-							<h3>{{Item.attachment.title}}</h3>
-							<h5>{{Item.attachment.description}}</h5>
-							<!-- No idea how to actually make this only apear when the meeting type is something but ill figure it out later -->
-							<button class="btn btn-default" ng-click="">View Online</button>
-						</div>
-					</div>
-						  </div>
 						</div>
 					  </div>
 					</div>
-				</div>
-
 			<div class="panel-footer">
 				<p style="text-align:center"> Time Allotted: {{meeting.duration}} - Time used: {{totalTime}} minutes</p>
-				<progressbar max="100" value="totalTimePercent"><span style="color:black; white-space:nowrap;">{{totalTimePercent | number:2}} / 100%</span></progressbar>
-				<p style="text-align:center"> {{totalTimePercent | number:2}} % used </p>
+				<progressbar max="100" value="totalTimePercent" style=""><span style="color:white; white-space:nowrap;">{{totalTimePercent | number:2}} / 100%</span></progressbar>
+				<p style="text-align:center;color:white"> {{totalTimePercent | number:2}} % used </p>
 			</div>
 		</div><!-- /panel -->
 	</div><!-- /row -->

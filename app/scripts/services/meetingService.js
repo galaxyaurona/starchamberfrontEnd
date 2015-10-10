@@ -7,101 +7,12 @@
  * # meetingService
  * Service in the starChamberUiApp.
  */
+ 
+ //TODO: Implement angular-bootstrap date pickers to the input boxes used in meetings
 angular.module('starChamberUiApp')
-  .factory('meetingService', function ($filter) {
+  .factory('meetingService', function ($filter,$http,$q,meetingRESTService,UserService) {
     var meetingFactory = {};
-	//States - What the date/time values mean are based off of this.
-	//0 - polling, agenda open
-	//1 - pending time(no time yet selected), agenda open
-	//2 - scheduled, agenda open
-	//3 - scheduled, agenda closed - This might not be needed
-	//4 - meeting
-	//5 - finished
 
-	//Creation of agendaItems and pollItems will need their own services?
-    meetingFactory.meetings = [
-      {
-        title: "test title",
-        description: "Test Desc",
-        id: 123,
-        invite: [],
-        attending: [],
-        state: 2,
-        date: new Date('18 May 2015 17:30:00'),
-        duration: 30,
-        chairmanId: 1,
-        address: "Test Addr",
-        locName: "Test locName",
-        conditions: {rescheduled: true, modified: false, editable: true, cancelled: false},
-        pollItems: []
-      },
-
-      {
-        id: 213,
-        title: "Weekly meeting",
-        description: "This week we need to discuss the next months budget, we also have multiple concerns",
-        invite: [
-			{
-			name: "chris",
-			id: 240
-			},
-			{
-			name: "dave",
-			id: 1
-			},
-			{
-			name: "dale",
-			id: 2
-			},
-			{
-			name: "steven",
-			id: 444
-			},
-			{
-			name: "nghia",
-			id: 355
-			},
-			{
-			name: "dan", 
-			id: 346
-			}
-		],
-        attending: [],
-        state: 0,
-        date: new Date('18 May 2015 17:30:00'),
-        duration: 40,
-        chairmanId: 3,
-        address: "Test Addr",
-        locName: "Test locName",
-        conditions: {rescheduled: false, modified: false, editable: true, cancelled: false},
-        pollItems: [
-			{
-			date: "3-9-2015",
-			time: "12:00",
-			votedId: [2],
-			id: 0
-			}, 
-			{
-			date: "2-9-2015",
-			time: "12:00",
-			votedId: [1],
-			id: 1
-			}
-		]
-      }
-    ]
-
-	//TODO: Finish meeting Get Call for meeting objects from userId
-	
-	/* Proper Meeting Get Call
-	meetingFactory.getMeetings(userId){
-		return $http.get('/api/meetings',{ //Post userId to back end
-			id:userId
-			}).success(function(data){
-			
-			})
-	}*/
-	
 	meetingFactory.meetingFilter = function(meetings,userId){
 		var foundMeetings = [];
 		for(var i = 0;i < meetings.length;++i)
@@ -122,55 +33,106 @@ angular.module('starChamberUiApp')
 		return foundMeetings;
 	};
 
-    meetingFactory.getMeetings=function(userdata)  {
+	//This gets invitations that contain a meeting your invited to
+    meetingFactory.getMeetings=function(roleId)  {
+      var UserServiceCopy = angular.copy(UserService);
+      if (roleId == UserService){
+        console.log(UserServiceCopy.userData);
+        roleId = UserService['userData'].board.id;
+      }
+		 var defered = $q.defer();
+		$http.get('http://www.ltuteamg.com:8000/api/invite/role?id=' + roleId,{ //Post userId to back end
 
-		//filter plz
-		return meetingFactory.meetingFilter(meetingFactory.meetings,userdata.id);
+		}).success(function(data){
+			defered.resolve(data.data);
+		})
+			return defered.promise;
     };
 
+    meetingFactory.getInvitesMeeting=function(meetingId)  {
+		 var defered = $q.defer();
+	//console.log(id);
+		$http.get('http://www.ltuteamg.com:8000/api/invite/meeting?id=' + meetingId,{ //Post userId to back end
+		}).success(function(data){
+			defered.resolve(data.data);
+		})
+			return defered.promise;
+    };
 
-	meetingFactory.getMeeting=function(meeting_Id)	{
-		for(var i = 0; i < meetingFactory.meetings.length;++i)
-		{
-			if(meetingFactory.meetings[i].id == meeting_Id)
-			return meetingFactory.meetings[i];
-		}
-		return false;
-	};
+	meetingFactory.getBoardRoles=function(boardID)  {
+		 var defered = $q.defer();
+		$http.get('http://www.ltuteamg.com:8000/api/users/board?id=' + boardID,{ //Post userId to back end
+		}).success(function(data){
+			defered.resolve(data.data);
+		})
+			return defered.promise;
+    };
 
-	//copied from concernService for reference
-    /*PROPER
-    concernFactory.postConcern=function(id,subject,description){
-      return $http.post('/api/concerns',{
-        id:id,
-        subject:subject,
-        description:description
-      }).success(function (data) {
-        return data;
-      });
-    }*/
-	
+meetingFactory.getMeeting= function(id){
+    var deferred = $q.defer();
+	//console.log(id);
+    meetingRESTService.getMeeting({id:id},function(data){
+      console.log("data",data);
+        if (data.data != undefined)
+          deferred.resolve(data.data);
+        else
+          deferred.reject({error:'cannot get meeting'})
+    },function(error){
+        console.log(error);
+        deferred.reject({error:'cannot get meeting'})
+    });
+    return deferred.promise;
+
+ };
+
+   meetingFactory.updateMeeting = function(meeting){
+      var deferred = $q.defer();
+		console.log(meeting);
+      meetingRESTService.updateMeeting(meeting,(function(response){
+        //console.log(response);
+        deferred.resolve(response);
+      }))
+	console.log(deferred.promise);
+      return deferred.promise;
+    }
+
+
+
 	//TODO: Create proper post methods, preferably split up to not pass an entire meeting each time.
-    meetingFactory.postMeeting = function(chairId,meeting){
-      meetingFactory.meetings.unshift({
-        id: meeting.Id,
-        title: meeting.title,
-        description: meeting.description,
-        chairId: meeting.chairId,
-        invitedId: meeting.invitedId,
-        attendingId: [],
-        state: 0,
-        date: meeting.date,
-        address: meeting.address,
-        locName: meeting.locName,
-        duration: meeting.duration,
-        conditions: meeting.conditions,
-        pollItems: [],
-        agendaItemsP: [],
-        agendaItems: []
+    meetingFactory.postMeeting = function(meeting){
+      var deferred = $q.defer();
+      meeting.id = undefined;
+      meetingRESTService.postMeeting(meeting,function(response){
+        //console.log('response',response);
+        deferred.resolve(response);
       });
       console.log(meetingFactory.meetings);
+      return deferred.promise;
     };
+	
+	meetingFactory.postInvite = function(invite){
+		console.log(invite);
+		var deferred = $q.defer();
+		$http.post('http://www.ltuteamg.com:8000/api/invite/i',{ //Post userId to back end
+			avaliabilities:invite.avaliabilities,
+			id:invite.id,
+			response:invite.response,
+			role:invite.role,
+			meeting:invite.meeting
+		}).success(function(data){
+			deferred.resolve(data.data);
+		})
+		 return deferred.promise;
+	}
+	meetingFactory.deleteInvite = function(inviteId){
+		console.log(inviteId);
+		var deferred = $q.defer();
+		$http.delete('http://www.ltuteamg.com:8000/api/invite/i?id=' + inviteId,{ //Post userId to back end
+		}).success(function(data){
+			deferred.resolve(data.data);
+		})
+		 return deferred.promise;
+	}
     return meetingFactory;
 
   });

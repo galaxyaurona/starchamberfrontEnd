@@ -1,1 +1,119 @@
-<div class="container-fluid"> <split-pane style="height: 70vh"> <!--first pane--> <split-pane-component width="65%"> <br><hr> <h3>Additional Note:</h3> <text-angular ng-show="manager" ng-model="minuteNote" ng-change="saveNote(minuteNote)"></text-angular> <div class="container-fluid" id="displayHTML"> </div> </split-pane-component> <split-pane-divider width="3px"></split-pane-divider> <!--second pane--> <split-pane-component style="padding:10px"> <input type="checkbox" ng-model="hideDebugInfo">Hide debug info <accordion> <accordion-group ng-repeat="item in agendaItems.approved" heading="{{item.title}}"> <pre ng-hide="hideDebugInfo">{{prettifyJSON(item)}}</pre> <h3>Description: <small>{{item.description}}</small></h3> <h4>Duration: <small> {{item.duration}} minutes</small></h4> <!-- attachment panel--> <div class="panel"> <div class="panel-heading"> <h4>Attachment:</h4> </div> <div class="panel-body"> <ul class="list-group"> <li class="list-group-item" ng-repeat="(key, value) in item.attachment"> <h4>{{key}}: <small>{{value}}</small></h4> </li> </ul> </div> </div> <!--Voting panel--> <div class="panel"> <div class="panel-heading"> <h4>Decision:</h4> </div> <div class="panel-body"> <canvas ng-if="manager" id="pie" class="chart chart-pie" data="item.decisionsData" labels="item.decisionsLabels" legend="true"></canvas> <ul class="list-group"> <li class="list-group-item" ng-repeat="(key, value) in item.decisions"> <label><input type="radio" name="item.id" ng-click="voteFor(item,value.dName)"> {{value.dName}} </label> </li> </ul> </div> </div> <hr> Additional note:<br> <textarea class="form-control" ng-model="item.notes"></textarea> </accordion-group> </accordion> </split-pane-component> </split-pane> </div>
+<div class="container-fluid middle-page" style="margin:0% 10%"> <!--<split-pane style="height: 70vh">
+
+    <split-pane-component width="65%">
+
+
+
+
+
+      </div>
+      <pre>{{prettifyJSON(agendaItemModified)}}</pre>
+    </split-pane-component>
+
+    <split-pane-divider width="3px"></split-pane-divider>
+
+    <split-pane-component style="padding:10px">
+
+
+    </split-pane-component>
+  </split-pane>--> <!--<input type="checkbox" ng-model="hideDebugInfo"/>Hide debug info
+  <accordion>
+    <accordion-group ng-repeat="item in agendaItemModified" heading="{{item.title}}">
+      <pre ng-hide="hideDebugInfo">{{prettifyJSON(item)}}</pre>
+      <h3>Description:
+        <small>{{item.description}}</small>
+      </h3>
+      <h4>Duration:
+        <small> {{item.duration}} minutes</small>
+      </h4>
+      <!-- attachment panel
+      <div class="panel" ng-if="item.attachment.length>0">
+        <div class="panel-heading">
+          <h4>Attachment:</h4>
+        </div>
+        <div class="panel-body">
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="(key, value) in item.attachment">
+              <h4>{{key}}:
+                <small>{{value}}</small>
+              </h4>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!--Voting panel
+      <div class="panel" ng-if="item.decisionData.length>0">
+        <div class="panel-heading">
+          <h4>Decision:</h4>
+        </div>
+        <div class="panel-body">
+
+          <canvas ng-if="manager" id="pie" class="chart chart-pie" data="item.decisionsData"
+                  labels="item.decisionsLabels" legend="true"></canvas>
+
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="(key, value) in item.decisions">
+              <label><input type="radio" name="item.id" ng-click="voteFor(item,value.dName)"> {{value.dName}} </label>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+      <hr>
+
+      <div class="panel">
+        <br>
+
+        <div class="row" ng-if="item.decision.name == undefined">
+          <div class="col-sm-2">
+            <label class="control-label">Add questions</label>
+          </div>
+
+          <div class="col-md-8">
+            <input type="text" class="form-control" ng-model="item.decision.name"/>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-primary" ng-click="addQuestion(item)">Add Question</button>
+          </div>
+
+        </div>
+        <h2 ng-if="item.decision.name" style="text-align: center">{{item.decision.name}}</h2>
+        <br>
+
+        <h3>Options:</h3>
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat="option in item.decision.options">
+            <button class="btn btn-primary" ng-hide="option.voted" ng-click="vote(option)">Vote</button>
+            <button class="btn btn-danger" ng-show="option.voted" ng-click="unvote(option)">Unvote</button>
+            {{option.name}}
+          </li>
+        </ul>
+        <br>
+
+        <form class="row" ng-if="item.decision.name" ng-submit="addOption(item)">
+          <div class="col-sm-2">
+            <label class="control-label">Decision name</label>
+          </div>
+
+          <div class="col-sm-8">
+            <input type="text" required class="form-control" ng-model="item.decision.newOption.name"/>
+          </div>
+          <div class="col-sm-2">
+            <button class="btn btn-primary" type="submit">Add options</button>
+            <br>
+          </div>
+
+        </form>
+
+
+        <br>
+
+        <div class="panel-body">
+
+          <text-angular ng-show="manager" ng-model="item.note.text" ng-change="saveNote(item.note)"></text-angular>
+
+          <div ng-hide="manager" ng-bind-html="item.note.text"></div>
+        </div>
+      </div>
+    </accordion-group>
+  </accordion>--> <div ng-repeat="item in agendaItemModified"> <div class="row"> <div class="panel"> <div class="panel-heading"> </div> <div class="panel-body"> <div class="row"> <div class="col-md-3"> <h4> Title: <small>{{item.title}}</small></h4> <h4>Description: <small>{{item.description}}</small></h4> <h4>Duration: <small> {{item.duration}} minutes</small></h4> <h4> Attachments: <small> things go here </small></h4> </div> <div class="col-md-6 verticalLine"> Edit <input type="checkbox" ng-model="hideDebugInfo"> <text-angular ng-show="manager && hideDebugInfo" ng-model="item.note.text" ng-change="saveNote(item.note)"></text-angular> <div ng-show="!manager || !hideDebugInfo" ng-bind-html="item.note.text"></div> </div> <div class="col-md-3"> <div class="input-group"> <input type="text" class="form-control" ng-model="item.decision.name" placeholder="New Question..."> <span class="input-group-btn" id="basic-addon2"> <button class="btn btn-primary" ng-click="addQuestion(item)">Add Question </button></span> <div class="input-group" ng-if="item.decision.name"> <input type="text" class="form-control" ng-model="item.decision.newOption.name" placeholder="New Option..."> <span class="input-group-btn" id="basic-addon2"> <button class="btn btn-primary" ng-click="addOption(item)">Add Choice </button></span> </div> <h4 ng-if="item.decision.name" class="text-center"> {{item.decision.name}} </h4> <h5 class="text-center">Options:</h5> <ul class="list-group" style="overflow-y:scroll;max-height:340px"> <li class="list-group-item" ng-repeat="option in item.decision.options"> <div class="row"> <div class="col-md-3"> <button class="btn btn-primary" ng-hide="option.voted" ng-click="vote(option)">Vote</button> <button class="btn btn-default" ng-show="option.voted" ng-click="unvote(option)">Unvote</button> </div> <div class="col-md-5"> {{option.name}} </div> <div class="col-md-4" ng-if="manager">Voted: {{option.users.length}}</div> </div> </li> </ul> </div> </div> </div> </div> </div> </div> </div> <div class="row"> <div class="col-md-12 text-center"> <button class="btn btn-primary btn-xl" ng-click="endMeeting()"> End Meeting</button> </div> </div> </div>

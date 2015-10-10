@@ -3,22 +3,27 @@
   "version": "0.0.0",
   "dependencies": {
     "angular": "^1.4.3",
-    "bootstrap": "3.3.4",
-    "angular-route": "^1.3.0",
-    "angular-ui-router": "~0.2.15",
     "angular-bootstrap": "~0.13.0",
-    "ng-flow": "~2",
-    "angular-xeditable": "~0.1.9",
-    "angular-ui-grid": "~3.0.1",
-    "angular.panels": "~1.0.3",
-    "ngBootbox": "~0.1.1",
-    "angular-ui-uploader": "~1.1.1",
-    "angular-split-pane": "~1.1.0",
+    "angular-bootstrap-colorpicker": "~3.0.19",
     "angular-chart.js": "~0.7.3",
-    "textAngular": "~1.4.3",
-    "ng-ckeditor": "~0.2.1",
     "angular-ckeditor": "~0.4.2",
-    "ckeditor": "~4.5.2"
+    "angular-moment": "~0.10.3",
+    "angular-resource": "~1.4.4",
+    "angular-route": "^1.3.0",
+    "angular-split-pane": "~1.1.0",
+    "angular-ui-grid": "~3.0.1",
+    "angular-ui-router": "~0.2.15",
+    "angular-ui-uploader": "~1.1.1",
+    "angular-xeditable": "~0.1.9",
+    "angular.panels": "~1.0.3",
+    "bootstrap": "3.3.4",
+    "ckeditor": "~4.5.2",
+    "moment": "~2.10.6",
+    "moment-timezone": "~0.4.0",
+    "ng-ckeditor": "~0.2.1",
+    "ng-flow": "~2",
+    "ngBootbox": "~0.1.1",
+    "textAngular": "~1.4.3"
   },
   "devDependencies": {
     "angular-mocks": "^1.3.0"
@@ -26,7 +31,7 @@
   "appPath": "app",
   "moduleName": "starChamberUiApp",
   "resolutions": {
-    "angular": "1.4.3",
+    "angular": "^1.4.4",
     "jquery": ">= 1.9.1"
   }
 }

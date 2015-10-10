@@ -8,8 +8,8 @@
 
         <form>
           <div class="form-group">
-            <label>Subject</label>
-            <textarea class="form-control" rows="1" ng-model="concern.subject" required></textarea>
+            <label>Title</label>
+            <textarea class="form-control" rows="1" ng-model="concern.title" required></textarea>
           </div>
           <div class="form-group">
             <label>Description</label>
@@ -18,6 +18,8 @@
           <div class="form-group">
             <label for="exampleInputFile">File upload</label>
             <input type="file" id="exampleInputFile" ng-model="exampleFile" multiple>
+            <BR>
+            <strong>Type of concern:</strong><select class="form-control" ng-options="concernType for concernType in concernTypes" ng-model="concern.type"></select>
           </div>
 
           <button class="btn btn-success" ng-click="submitConcern()">Submit</button>
